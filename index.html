@@ -1,0 +1,231 @@
+<script>
+let currentUser = null;
+
+// Menu functions
+function openMenu(){ document.getElementById('sideMenu').style.right='0'; }
+function closeMenu(){ document.getElementById('sideMenu').style.right='-250px'; }
+
+// Section display
+function showSection(id){
+  document.querySelectorAll('.section').forEach(sec=>sec.style.display='none');
+  const section = document.getElementById(id);
+  if(section) section.style.display='block';
+  if(id==='recent') loadRecentPastes();
+  if(id==='hall') loadHall();
+  if(id==='chat') loadChat();
+  if(id==='friends') loadFriends();
+  if(id==='messages') loadMessages();
+}
+
+function showLogin(){ showSection('loginSection'); }
+
+// Account creation/login
+function createAccount(){
+  let user = document.getElementById('usernameInput').value;
+  let pass = document.getElementById('passwordInput').value;
+  let pic = document.getElementById('profilePicInput').value || 'https://via.placeholder.com/30';
+  let users = JSON.parse(localStorage.getItem('users')||'{}');
+  if(users[user]){ document.getElementById('loginMsg').innerText='Account already exists'; return; }
+  users[user]={password:pass, pic:pic, friends:[], friendRequests:[], messages:{}};
+  localStorage.setItem('users', JSON.stringify(users));
+  currentUser = user;
+  document.getElementById('loginMsg').innerText='Account created successfully!';
+  const prompt = document.getElementById('loginPrompt');
+  if(prompt) prompt.style.display='none';
+  document.getElementById('asciiArt').style.display='block';
+  loadFriends();
+}
+
+function loginAccount(){
+  let user = document.getElementById('usernameInput').value;
+  let pass = document.getElementById('passwordInput').value;
+  let users = JSON.parse(localStorage.getItem('users')||'{}');
+  if(!users[user]){ document.getElementById('loginMsg').innerText='Account does not exist'; return; }
+  if(users[user].password!==pass){ document.getElementById('loginMsg').innerText='Password incorrect'; return; }
+  currentUser = user;
+  document.getElementById('loginMsg').innerText='Logged in!';
+  const prompt = document.getElementById('loginPrompt');
+  if(prompt) prompt.style.display='none';
+  document.getElementById('asciiArt').style.display='block';
+  loadFriends();
+}
+
+// Paste functions
+function createPaste(){
+  if(!currentUser){ alert('Login first'); return; }
+  let title=document.getElementById('pasteTitle').value;
+  let content=document.getElementById('pasteContent').value;
+  let image=document.getElementById('pasteImage').value;
+  let pastes=JSON.parse(localStorage.getItem('pastes')||'[]');
+  pastes.unshift({title,content,image:image||'',author:currentUser,date:Date.now()});
+  localStorage.setItem('pastes', JSON.stringify(pastes));
+  alert('Paste created!');
+  document.getElementById('pasteTitle').value='';
+  document.getElementById('pasteContent').value='';
+  document.getElementById('pasteImage').value='';
+}
+
+function loadHall(){
+  let pastes=JSON.parse(localStorage.getItem('pastes')||'[]');
+  let counts={};
+  pastes.forEach(p=>{ counts[p.title]=(counts[p.title]||0)+1; });
+  let sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  let container=document.getElementById('hallPastes');
+  if(!container) return;
+  container.innerHTML='';
+  sorted.slice(0,10).forEach(([title,count])=>{
+    pastes.forEach(p=>{
+      if(p.title===title && p.image){
+        let div=document.createElement('div');
+        div.innerHTML=`<strong>${p.title}</strong> (${count} times)<br><img src='${p.image}' style='max-width:100%; margin-top:5px;'>`;
+        container.appendChild(div);
+      }
+    });
+  });
+}
+
+// Friend system
+function sendFriendRequest() {
+  if(!currentUser) return alert('Login first');
+  let target = document.getElementById('addFriendInput').value;
+  if(!target) return alert('Enter a username');
+  let users = JSON.parse(localStorage.getItem('users')||'{}');
+  if(!users[target]) return alert('User does not exist');
+  if(users[target].friendRequests.includes(currentUser)) return alert('Request already sent');
+  if(users[target].friends.includes(currentUser)) return alert('Already friends');
+  users[target].friendRequests.push(currentUser);
+  localStorage.setItem('users', JSON.stringify(users));
+  alert('Friend request sent!');
+  document.getElementById('addFriendInput').value='';
+  loadFriends();
+}
+
+function loadFriends() {
+  if(!currentUser) return;
+  let users = JSON.parse(localStorage.getItem('users')||'{}');
+  const reqDiv = document.getElementById('friendRequests');
+  reqDiv.innerHTML='';
+  users[currentUser].friendRequests.forEach((user, idx)=>{
+    let div = document.createElement('div');
+    div.className='friend-request';
+    div.innerHTML=`${user} 
+      <button onclick="acceptFriend('${user}',${idx})">Accept</button>
+      <button onclick="denyFriend('${user}',${idx})">Deny</button>`;
+    reqDiv.appendChild(div);
+  });
+  const friendsDiv = document.getElementById('friendsList');
+  friendsDiv.innerHTML='';
+  users[currentUser].friends.forEach(friend=>{
+    let div=document.createElement('div');
+    div.textContent=friend;
+    div.innerHTML+=` <button onclick="openPrivateChat('${friend}')">Message</button>`;
+    friendsDiv.appendChild(div);
+  });
+}
+
+// Friend accept/deny
+function acceptFriend(user, idx){
+  let users = JSON.parse(localStorage.getItem('users')||'{}');
+  users[currentUser].friends.push(user);
+  users[user].friends.push(currentUser);
+  users[currentUser].friendRequests.splice(idx,1);
+  localStorage.setItem('users', JSON.stringify(users));
+  loadFriends();
+}
+
+function denyFriend(user, idx){
+  let users = JSON.parse(localStorage.getItem('users')||'{}');
+  users[currentUser].friendRequests.splice(idx,1);
+  localStorage.setItem('users', JSON.stringify(users));
+  loadFriends();
+}
+
+// Global chat placeholder
+function loadChat(){ console.log('loadChat called'); }
+
+// ----------------- Private Messaging -----------------
+let currentChatFriend = null;
+
+function loadMessages() {
+  if(!currentUser) return;
+  const users = JSON.parse(localStorage.getItem('users')||'{}');
+  const messagesList = document.getElementById('messagesList');
+  messagesList.innerHTML='';
+
+  // Create select dropdown if not exists
+  if(!document.getElementById('friendSelect')) {
+    const select = document.createElement('select');
+    select.id='friendSelect';
+    select.onchange=selectFriend;
+    const firstOption = document.createElement('option');
+    firstOption.value=''; firstOption.text='-- Select a friend --';
+    select.appendChild(firstOption);
+    document.getElementById('messages').insertBefore(select, messagesList);
+  }
+  const select = document.getElementById('friendSelect');
+  select.innerHTML='<option value="">-- Select a friend --</option>';
+  users[currentUser].friends.forEach(f=>{
+    const opt=document.createElement('option');
+    opt.value=f; opt.innerText=f;
+    select.appendChild(opt);
+  });
+  currentChatFriend=null;
+  messagesList.innerHTML='';
+}
+
+function selectFriend(){
+  currentChatFriend=document.getElementById('friendSelect').value;
+  loadPrivateChat();
+}
+
+function loadPrivateChat(){
+  if(!currentUser || !currentChatFriend) return;
+  const users=JSON.parse(localStorage.getItem('users')||'{}');
+  const chatBox=document.getElementById('messagesList');
+  chatBox.innerHTML='';
+  const messages = users[currentUser].messages[currentChatFriend] || [];
+  messages.forEach(msg=>{
+    const div=document.createElement('div');
+    div.className='message';
+    div.innerHTML=`<strong>${msg.from}:</strong> ${msg.text}`;
+    chatBox.appendChild(div);
+  });
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function sendPrivateMessage(){
+  const input=document.getElementById('privateMessageInput');
+  const text=input.value;
+  if(!currentUser || !currentChatFriend || !text) return;
+  const users=JSON.parse(localStorage.getItem('users')||'{}');
+
+  if(!users[currentUser].messages[currentChatFriend]) users[currentUser].messages[currentChatFriend]=[];
+  users[currentUser].messages[currentChatFriend].push({from:currentUser,text});
+
+  if(!users[currentChatFriend].messages[currentUser]) users[currentChatFriend].messages[currentUser]=[];
+  users[currentChatFriend].messages[currentUser].push({from:currentUser,text});
+
+  localStorage.setItem('users', JSON.stringify(users));
+  input.value='';
+  loadPrivateChat();
+}
+
+// Recent pastes/search placeholders
+function loadRecentPastes(){ console.log('loadRecentPastes called'); }
+function searchPastes(){ console.log('searchPastes called'); }
+
+// Device & activity
+function detectDevice(){
+  let ua=navigator.userAgent; let device='Unknown';
+  if(/android/i.test(ua)) device='Android';
+  else if(/iPad|iPhone|iPod/.test(ua)) device='iOS';
+  else if(/Windows|Macintosh|Linux/.test(ua)) device='Desktop';
+  document.getElementById('deviceInfo').innerText='Device: '+device;
+}
+detectDevice();
+function updateActivity(){
+  document.getElementById('onlineCount').innerText=Math.floor(Math.random()*10+1);
+}
+setInterval(updateActivity,3000);
+showSection('home');
+</script>
