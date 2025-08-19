@@ -3,32 +3,30 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>N0rb1n — Multi‑User Single File</title>
+<title>N0rb1n — Full Version</title>
 <style>
-  :root{--bg:#071025;--panel:#0f1324;--muted:#9aa7c7;--accent:#6c5ce7;--good:#3ee98a;--bad:#ff6b6b;--glass: rgba(255,255,255,.04)}
+  :root{--bg:#071025;--panel:#0f1324;--muted:#9aa7c7;--accent:#6c5ce7;--good:#3ee98a;--bad:#ff6b6b}
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;min-height:100vh;background:linear-gradient(180deg,var(--bg),#040515);color:#e9f0ff}
-  header{display:flex;align-items:center;gap:12px;padding:12px 16px;background:linear-gradient(180deg, rgba(255,255,255,.02), transparent);border-bottom:1px solid rgba(255,255,255,.03);position:sticky;top:0;z-index:10}
-  .brand{font-weight:800;font-size:20px;background:linear-gradient(90deg,#ff6b6b,#ffd166,#3ee98a,#00d4ff,#6c5ce7);-webkit-background-clip:text;background-clip:text;color:transparent}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial;background:linear-gradient(180deg,var(--bg),#040515);color:#e9f0ff}
+  header{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);position:sticky;top:0;background:rgba(255,255,255,.02);z-index:20}
+  .brand{font-weight:800;font-size:20px;background:linear-gradient(90deg,#ff6b6b,#ffd166,#3ee98a,#00d4ff,#6c5ce7);-webkit-background-clip:text;color:transparent}
   .spacer{flex:1}
-  .top-info{font-size:13px;color:var(--muted);display:flex;gap:12px;align-items:center}
+  .top-info{display:flex;gap:12px;align-items:center;font-size:13px;color:var(--muted)}
   .btn{background:linear-gradient(135deg, rgba(108,92,231,.18), rgba(0,212,255,.08));border:0;padding:8px 12px;border-radius:10px;color:#fff;cursor:pointer}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.05)}
-  .wrap{display:grid;grid-template-columns:260px 1fr;gap:16px;padding:18px}
-  aside{background:var(--panel);padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.03)}
-  nav a{display:block;padding:10px;border-radius:10px;color:inherit;text-decoration:none;margin-bottom:6px;border:1px solid transparent}
-  nav a.active{outline:2px solid rgba(0,212,255,.12);background:linear-gradient(90deg, rgba(108,92,231,.08), rgba(0,212,255,.04))}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,.04)}
+  .wrap{display:grid;grid-template-columns:280px 1fr;gap:16px;padding:18px}
+  aside{background:var(--panel);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.03)}
+  nav a{display:block;padding:10px;border-radius:8px;color:inherit;text-decoration:none;margin-bottom:6px}
+  nav a.active{background:linear-gradient(90deg, rgba(108,92,231,.06), rgba(0,212,255,.03));outline:2px solid rgba(0,212,255,.06)}
   main{min-height:70vh}
   .card{background:linear-gradient(180deg, rgba(255,255,255,.02), transparent);padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.03)}
   input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.04);background:transparent;color:inherit}
   label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
-  .row{display:flex;gap:10px}
-  .tiny{font-size:12px;color:var(--muted)}
   .list .item{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,.03);margin-bottom:8px;display:flex;gap:10px;align-items:center}
-  .avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(90deg,#6c5ce7,#00d4ff);display:inline-block;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
-  .muted{color:var(--muted)}
+  .avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(90deg,#6c5ce7,#00d4ff);display:flex;align-items:center;justify-content:center;font-weight:700}
+  .tiny{font-size:12px;color:var(--muted)}
   .danger{background:linear-gradient(90deg, rgba(255,0,64,.12), rgba(255,100,100,.06));border:1px solid rgba(255,0,64,.12)}
-  footer{padding:14px;text-align:center;color:var(--muted)}
+  .notif{position:fixed;right:18px;bottom:18px;padding:10px 14px;border-radius:10px;background:rgba(0,0,0,.6);color:#fff;box-shadow:0 8px 30px rgba(0,0,0,.6)}
   @media(max-width:920px){.wrap{grid-template-columns:1fr}.sidebar-hidden{display:none}}
 </style>
 </head>
@@ -36,10 +34,10 @@
 <header>
   <div class="brand">N0rb1n</div>
   <div class="spacer"></div>
-  <div class="top-info" id="topInfo">
-    <div id="deviceTxt" class="tiny muted">Device: detecting…</div>
-    <div id="onlineTxt" class="tiny muted">● 0 online</div>
-    <div id="userArea" class="tiny muted">Not signed in</div>
+  <div class="top-info">
+    <div id="deviceTxt">Device: detecting…</div>
+    <div id="onlineTxt">● 0 online</div>
+    <div id="userArea">Not signed in</div>
     <button class="btn" id="toggleSidebar">Toggle Menu</button>
   </div>
 </header>
@@ -54,7 +52,7 @@
       <a href="#" data-page="home" class="active">🏠 Home</a>
       <a href="#" data-page="paste">📄 Create Paste</a>
       <a href="#" data-page="recent">🕒 Recent Pastes</a>
-      <a href="#" data-page="top">⭐ Top Mentions (with images)</a>
+      <a href="#" data-page="top">⭐ Top Mentions</a>
       <a href="#" data-page="chat">💬 Global Chat</a>
       <a href="#" data-page="friends">👥 Friends</a>
       <a href="#" data-page="messages">✉️ Messages</a>
@@ -63,8 +61,14 @@
       <a href="#" data-page="login">🔐 Log In</a>
     </nav>
     <div style="margin-top:12px" class="card">
-      <div class="tiny muted">Device</div>
+      <div class="tiny">Device</div>
       <div id="deviceBox" style="margin-top:6px">Detecting…</div>
+      <hr style="border:0;border-top:1px solid rgba(255,255,255,.03);margin:10px 0">
+      <div class="tiny">Account export / import</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" id="exportBtn">Export</button>
+        <button class="btn ghost" id="importBtn">Import</button>
+      </div>
     </div>
   </aside>
 
@@ -82,11 +86,11 @@
       <h3>Create a Paste</h3>
       <label>Title</label>
       <input id="pasteTitle" />
-      <label style="margin-top:8px">Image URL (optional — will show in Top Mentions only)</label>
+      <label style="margin-top:8px">Image URL (optional — appears in Top Mentions)</label>
       <input id="pasteImage" placeholder="https://... (optional)"/>
       <label style="margin-top:8px">Content</label>
       <textarea id="pasteContent" rows="6"></textarea>
-      <div style="margin-top:10px;display:flex;gap:8px"><button id="savePaste" class="btn">Save Paste</button><div id="pasteMsg" class="tiny muted"></div></div>
+      <div style="margin-top:10px;display:flex;gap:8px"><button id="savePaste" class="btn">Save Paste</button><div id="pasteMsg" class="tiny"></div></div>
     </section>
 
     <!-- RECENT -->
@@ -97,7 +101,7 @@
 
     <!-- TOP -->
     <section id="page-top" class="card page" style="display:none">
-      <h3>Top Mentions (images only shown here)</h3>
+      <h3>Top Mentions (images shown here)</h3>
       <div id="topList" class="list" style="margin-top:8px"></div>
     </section>
 
@@ -117,11 +121,11 @@
       <h3>Friends & Requests</h3>
       <div style="display:flex;gap:12px;margin-top:8px">
         <div style="flex:1">
-          <div class="tiny muted">Incoming</div>
+          <div class="tiny">Incoming</div>
           <div id="incomingReq" class="list" style="margin-top:8px"></div>
         </div>
         <div style="flex:1">
-          <div class="tiny muted">Your Friends</div>
+          <div class="tiny">Your Friends</div>
           <div id="friendsList" class="list" style="margin-top:8px"></div>
         </div>
       </div>
@@ -132,11 +136,11 @@
       <h3>Private Messages</h3>
       <div style="display:flex;gap:12px;margin-top:8px">
         <div style="width:260px">
-          <div class="tiny muted">Threads</div>
+          <div class="tiny">Threads</div>
           <div id="threadList" style="margin-top:8px"></div>
         </div>
         <div style="flex:1">
-          <div id="dmHeader" class="tiny muted">Select a thread</div>
+          <div id="dmHeader" class="tiny">Select a thread</div>
           <div id="dmArea" style="border:1px solid rgba(255,255,255,.04);padding:8px;max-height:300px;overflow:auto;border-radius:8px;margin-top:8px"></div>
           <div style="display:flex;gap:8px;margin-top:8px"><input id="dmInput" placeholder="Message…"/><button id="dmSend" class="btn">Send</button></div>
         </div>
@@ -150,8 +154,8 @@
         <div id="myAvatar" class="avatar">?</div>
         <div>
           <div id="myName" style="font-weight:700">—</div>
-          <div class="tiny muted" id="myLastLogin">Last login: —</div>
-          <div class="tiny muted" id="myDevice">Device: —</div>
+          <div class="tiny" id="myLastLogin">Last login: —</div>
+          <div class="tiny" id="myDevice">Device: —</div>
         </div>
       </div>
 
@@ -164,7 +168,7 @@
       </div>
 
       <div id="myStats" style="margin-top:12px">
-        <div class="tiny muted">Friends: <span id="myFriendCount">0</span> — Pending: <span id="myPendingCount">0</span></div>
+        <div class="tiny">Friends: <span id="myFriendCount">0</span> — Pending: <span id="myPendingCount">0</span></div>
         <h4 style="margin-top:10px">My Recent Pastes</h4>
         <div id="myPastes" class="list" style="margin-top:8px"></div>
       </div>
@@ -177,7 +181,7 @@
       <input id="suUser" />
       <label style="margin-top:8px">Password</label>
       <input id="suPass" type="password" />
-      <div style="margin-top:8px;display:flex;gap:8px"><button id="suBtn" class="btn">Create account</button><div id="suMsg" class="tiny muted"></div></div>
+      <div style="margin-top:8px;display:flex;gap:8px"><button id="suBtn" class="btn">Create account</button><div id="suMsg" class="tiny"></div></div>
     </section>
 
     <!-- LOGIN -->
@@ -187,212 +191,123 @@
       <input id="liUser" />
       <label style="margin-top:8px">Password</label>
       <input id="liPass" type="password" />
-      <div style="margin-top:8px;display:flex;gap:8px"><button id="liBtn" class="btn">Log In</button><div id="liMsg" class="tiny muted"></div></div>
+      <div style="margin-top:8px;display:flex;gap:8px"><button id="liBtn" class="btn">Log In</button><div id="liMsg" class="tiny"></div></div>
     </section>
 
   </main>
 </div>
-<footer>Single-file app · All features active · Data persists in this browser</footer>
+
+<div id="notif" class="notif" style="display:none"></div>
+<footer style="padding:14px;text-align:center;color:var(--muted)">Full version — single file app · Data stored in this browser</footer>
 
 <script>
-/* ======= Simple DB in localStorage ======= */
+/* ===== STORAGE ===== */
 const LS = { get(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}, set(k,v){localStorage.setItem(k,JSON.stringify(v))} };
-const DB = {
-  users: LS.get('n_users', {}), // username -> {pass, avatar, friends:[], req:[], out:[], pastes:[], lastLogin:ts, device}
-  chats: LS.get('n_chats', []),  // global chat messages
-  dms: LS.get('n_dms', {}),     // convoId -> {between:[a,b], msgs:[]}
-};
+const DB = { users: LS.get('n_users', {}), chats: LS.get('n_chats', []), dms: LS.get('n_dms', {}), _pastes: LS.get('n_pastes', []) };
 let STATE = { current: LS.get('n_current', null), activeDM: null };
+function saveAll(){ LS.set('n_users', DB.users); LS.set('n_chats', DB.chats); LS.set('n_dms', DB.dms); LS.set('n_pastes', DB._pastes); LS.set('n_current', STATE.current); }
+function uid(){ return Math.random().toString(36).slice(2,9) }
+function $(s){ return document.querySelector(s) }
+function $all(s){ return Array.from(document.querySelectorAll(s)) }
+function notify(msg, t=3000){ const n=$('#notif'); n.textContent=msg; n.style.display='block'; setTimeout(()=>n.style.display='none',t) }
+function esc(s){ return (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])) }
 
-/* ======= Helpers ======= */
-const q = sel => document.querySelector(sel);
-const qAll = sel => Array.from(document.querySelectorAll(sel));
-const uid = () => Math.random().toString(36).slice(2,9);
-function saveAll(){ LS.set('n_users', DB.users); LS.set('n_chats', DB.chats); LS.set('n_dms', DB.dms); LS.set('n_current', STATE.current); }
-function escape(s){ return (s||'').toString().replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+/* ===== ROUTER ===== */
+const PAGES=['home','paste','recent','top','chat','friends','messages','account','signin','login'];
+$('#menu').addEventListener('click',e=>{ const a=e.target.closest('a[data-page]'); if(!a) return; navigate(a.dataset.page,true); });
+function navigate(page, push){ if(!PAGES.includes(page)) page='home'; $all('.page').forEach(el=>el.style.display='none'); const el=$('#page-'+page); if(el) el.style.display='block'; $all('#menu a').forEach(a=>a.classList.toggle('active', a.dataset.page===page)); if(push){ history.pushState({page},'',`?page=${page}`) } if(page==='recent') renderRecent(); if(page==='top') renderTop(); if(page==='chat') renderChat(); if(page==='friends') renderFriends(); if(page==='messages'){ renderThreads(); } if(page==='account') renderAccount(); }
+(function(){ const url=new URL(location); const p=url.searchParams.get('page')||'home'; navigate(p,false); })();
+window.onpopstate = e=>{ navigate((e.state&&e.state.page)||'home',false); };
 
-/* ======= Routing (menu) ======= */
-q('#menu').addEventListener('click', e=>{
-  const a = e.target.closest('a[data-page]');
-  if(!a) return; const page = a.dataset.page; navigate(page, true);
-});
-function navigate(page, redirect){ qAll('.page').forEach(el=>el.style.display='none'); const el = q('#page-'+page); if(el){ el.style.display='block'; qAll('#menu a').forEach(a=>a.classList.toggle('active', a.dataset.page===page)); }
-  if(redirect){ const url = new URL(location); url.searchParams.set('page', page); history.pushState({},'',url); }
-  // page-specific hooks
-  if(page==='recent') renderRecent();
-  if(page==='top') renderTop();
-  if(page==='chat') renderChat();
-  if(page==='friends') renderFriends();
-  if(page==='messages') renderThreads();
-  if(page==='account') renderAccount();
-}
-// init from url
-(function(){ const u = new URL(location).searchParams.get('page')||'home'; navigate(u,false); })();
-
-/* ======= Device detection ======= */
-function detectDevice(){
-  const ua = navigator.userAgent||''; const mobile = /Mobi|Android|iPhone|iPad|iPod/i.test(ua);
-  let type = mobile? (/Android/i.test(ua)?'Android':'iOS') : 'Desktop';
-  let vm = false;
-  try{ const gl = document.createElement('canvas').getContext('webgl'); if(gl){ const dbg = gl.getExtension('WEBGL_debug_renderer_info'); if(dbg){ const v = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)||''; if(/SwiftShader|VirtualBox|VMware|Virtual GPU|Microsoft Basic Render/i.test(v)) vm=true; } } }catch(e){}
-  const vp = mobile && (navigator.maxTouchPoints===0 || Math.max(screen.width,screen.height)>2000);
-  const flags = []; if(vm) flags.push('VM'); if(vp) flags.push('VP');
-  q('#deviceBox').textContent = flags.length? `${type} • ${flags.join(' + ')}` : type;
-  q('#deviceTxt').textContent = 'Device: '+ (flags.length? `${type} • ${flags.join(' + ')}` : type);
-}
+/* ===== DEVICE DETECTION ===== */
+function detectDevice(){ const ua=navigator.userAgent||''; const mobile=/Mobi|Android|iPhone|iPad|iPod/i.test(ua); const type=mobile?(/Android/i.test(ua)?'Android':'iOS'):'Desktop'; let vm=false; try{ const gl=document.createElement('canvas').getContext('webgl'); if(gl){ const dbg=gl.getExtension('WEBGL_debug_renderer_info'); if(dbg){ const v=gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)||''; if(/SwiftShader|VirtualBox|VMware|Virtual GPU|Microsoft Basic Render/i.test(v)) vm=true; } } }catch(e){} const vp = mobile && (navigator.maxTouchPoints===0 || Math.max(screen.width,screen.height)>2000); const flags=[]; if(vm) flags.push('VM'); if(vp) flags.push('VP'); const disp = flags.length?`${type} • ${flags.join(' + ')}`:type; $('#deviceBox').textContent=disp; $('#deviceTxt').textContent='Device: '+disp; }
 detectDevice();
 
-/* ======= Menu controls ======= */
-q('#toggleSidebar').addEventListener('click', ()=> q('#sidebar').classList.toggle('sidebar-hidden'));
-q('#closeMenu').addEventListener('click', ()=> q('#sidebar').classList.add('sidebar-hidden'));
+/* ===== ACCOUNT: SIGNUP / LOGIN / LOGOUT / DELETE / PROFILE ===== */
+$('#suBtn').addEventListener('click', ()=>{
+  const u=($('#suUser').value||'').trim(), p=($('#suPass').value||'').trim(); if(!u||!p) { $('#suMsg').textContent='Fill username & password'; return }
+  if(DB.users[u]){ $('#suMsg').textContent='Account already exists (not signed in).'; return }
+  DB.users[u]={pass:p,avatar:'',friends:[],req:[],out:[],pastes:[],lastLogin:Date.now(),device:$('#deviceBox').textContent}; saveAll(); $('#suMsg').textContent='Account created'; notify('Account created: '+u); });
 
-/* ======= Sign Up / Log In / Accounts ======= */
-q('#suBtn').addEventListener('click', ()=>{
-  const u = (q('#suUser').value||'').trim(); const p = (q('#suPass').value||'').trim(); const msg = q('#suMsg'); msg.style.color='';
-  if(!u||!p){ msg.textContent='Fill username & password'; return }
-  if(DB.users[u]){ msg.style.color='var(--muted)'; msg.textContent='Account already exists (you are not signed in).'; return }
-  DB.users[u] = { pass:p, avatar:'', friends:[], req:[], out:[], pastes:[], lastLogin: Date.now(), device: q('#deviceBox').textContent };
-  saveAll(); msg.style.color='var(--good)'; msg.textContent='Account created';
-});
+$('#liBtn').addEventListener('click', ()=>{
+  const u=($('#liUser').value||'').trim(), p=($('#liPass').value||'').trim(); if(!u||!p){ $('#liMsg').textContent='Enter username & password'; return }
+  const rec=DB.users[u]; if(!rec){ $('#liMsg').textContent='Account isn\'t existing.'; return }
+  if(rec.pass!==p){ $('#liMsg').textContent='The account password is incorrect.'; return }
+  STATE.current=u; DB.users[u].lastLogin=Date.now(); DB.users[u].device=$('#deviceBox').textContent; saveAll(); $('#liMsg').textContent='Logged in'; updateTopUser(); notify('Logged in: '+u); navigate('home',true); });
 
-q('#liBtn').addEventListener('click', ()=>{
-  const u = (q('#liUser').value||'').trim(); const p = (q('#liPass').value||'').trim(); const msg = q('#liMsg'); msg.style.color='';
-  if(!u||!p){ msg.textContent='Enter username & password'; return }
-  const rec = DB.users[u]; if(!rec){ msg.textContent='Account isn\'t existing.'; return }
-  if(rec.pass !== p){ msg.textContent='The account password is incorrect.'; return }
-  STATE.current = u; DB.users[u].lastLogin = Date.now(); DB.users[u].device = q('#deviceBox').textContent; saveAll(); msg.style.color='var(--good)'; msg.textContent='Logged in'; updateTopUser(); navigate('home');
-});
+function logout(){ STATE.current=null; saveAll(); updateTopUser(); notify('Logged out'); navigate('home',true); }
+$('#logoutBtn').addEventListener('click', ()=>logout());
 
-function logout(){ STATE.current = null; saveAll(); updateTopUser(); navigate('home'); }
-q('#logoutBtn').addEventListener('click', ()=>{ logout(); });
+$('#deleteBtn').addEventListener('click', ()=>{
+  if(!STATE.current) return; if(!confirm('Delete account permanently?')) return; const u=STATE.current; Object.keys(DB.users).forEach(o=>{ if(o===u) return; DB.users[o].friends=(DB.users[o].friends||[]).filter(x=>x!==u); DB.users[o].req=(DB.users[o].req||[]).filter(x=>x!==u); DB.users[o].out=(DB.users[o].out||[]).filter(x=>x!==u); }); Object.keys(DB.dms).forEach(id=>{ if(id.split('|').includes(u)) delete DB.dms[id]; }); delete DB.users[u]; STATE.current=null; saveAll(); updateTopUser(); notify('Account deleted: '+u); navigate('home',true); });
 
-function deleteAccount(){ if(!STATE.current) return; if(!confirm('Delete account permanently?')) return; const u = STATE.current; // remove associated dms and clean up
-  // remove user from other users' friends/requests
-  Object.keys(DB.users).forEach(other=>{
-    if(other===u) return; DB.users[other].friends = (DB.users[other].friends||[]).filter(x=>x!==u); DB.users[other].req = (DB.users[other].req||[]).filter(x=>x!==u); DB.users[other].out = (DB.users[other].out||[]).filter(x=>x!==u);
-  });
-  // remove dms
-  Object.keys(DB.dms).forEach(id=>{ if(id.includes('|')){ const parts=id.split('|'); if(parts.includes(u)) delete DB.dms[id]; }});
-  delete DB.users[u]; STATE.current=null; saveAll(); updateTopUser(); navigate('home'); alert('Account deleted'); }
-q('#deleteBtn').addEventListener('click', deleteAccount);
-
-/* ======= Update top bar user */
-function updateTopUser(){ q('#myName').textContent = STATE.current||'—'; q('#userArea').textContent = STATE.current? `Signed in: ${STATE.current}` : 'Not signed in'; q('#myAvatar').textContent = STATE.current? (DB.users[STATE.current].avatar? '': (STATE.current[0]||'?').toUpperCase()) : '?'; if(STATE.current && DB.users[STATE.current].avatar){ q('#myAvatar').style.backgroundImage = `url(${DB.users[STATE.current].avatar})`; q('#myAvatar').textContent=''; q('#myAvatar').style.backgroundSize='cover'; } else { q('#myAvatar').style.backgroundImage=''; q('#myAvatar').style.background='linear-gradient(90deg,#6c5ce7,#00d4ff)'; }
-  q('#myLastLogin').textContent = STATE.current? 'Last login: '+ new Date(DB.users[STATE.current].lastLogin).toLocaleString() : 'Last login: —'; q('#myDevice').textContent = STATE.current? 'Device: '+(DB.users[STATE.current].device||'—') : 'Device: —';
-  q('#myFriendCount').textContent = STATE.current? (DB.users[STATE.current].friends||[]).length : 0; q('#myPendingCount').textContent = STATE.current? (DB.users[STATE.current].req||[]).length : 0; saveAll(); }
+function updateTopUser(){ $('#userArea').textContent = STATE.current? 'Signed in: '+STATE.current : 'Not signed in'; $('#myName').textContent = STATE.current||'—'; if(STATE.current){ const me=DB.users[STATE.current]; $('#myLastLogin').textContent = 'Last login: '+new Date(me.lastLogin||0).toLocaleString(); $('#myDevice').textContent = 'Device: '+(me.device||'—'); $('#myFriendCount').textContent = (me.friends||[]).length; $('#myPendingCount').textContent = (me.req||[]).length; if(me.avatar){ $('#myAvatar').style.backgroundImage=`url(${me.avatar})`; $('#myAvatar').textContent=''; $('#myAvatar').style.backgroundSize='cover'; } else { $('#myAvatar').style.backgroundImage=''; $('#myAvatar').textContent = (STATE.current[0]||'?').toUpperCase(); } } else { $('#myAvatar').style.backgroundImage=''; $('#myAvatar').textContent='?'; $('#myLastLogin').textContent='Last login: —'; $('#myDevice').textContent='Device: —'; $('#myFriendCount').textContent='0'; $('#myPendingCount').textContent='0'; }
+}
 updateTopUser();
 
-/* ======= Avatar edit & change password ======= */
-q('#editAvatarBtn').addEventListener('click', ()=>{
-  if(!STATE.current){ alert('Log in first'); return }
-  const url = prompt('Enter image URL for avatar (blank to remove):', DB.users[STATE.current].avatar||'') || '';
-  DB.users[STATE.current].avatar = url.trim(); saveAll(); updateTopUser(); renderAccount(); });
-q('#changePassBtn').addEventListener('click', ()=>{
-  if(!STATE.current){ alert('Log in first'); return }
-  const cur = prompt('Enter current password:'); if(cur===null) return; if(cur!==DB.users[STATE.current].pass){ alert('Current password incorrect'); return }
-  const np = prompt('Enter new password:'); if(!np) return; DB.users[STATE.current].pass = np; saveAll(); alert('Password changed'); });
+$('#editAvatarBtn').addEventListener('click', ()=>{ if(!STATE.current){ alert('Log in first'); return } const url=prompt('Avatar image URL (blank to remove):', DB.users[STATE.current].avatar||'')||''; DB.users[STATE.current].avatar=url.trim(); saveAll(); updateTopUser(); renderAccount(); notify('Avatar updated'); });
 
-/* ======= Pastes (with optional image available only in Top Mentions) ======= */
-q('#savePaste').addEventListener('click', ()=>{
-  const t = (q('#pasteTitle').value||'').trim(); const b = (q('#pasteContent').value||'').trim(); const img = (q('#pasteImage').value||'').trim(); if(!t||!b){ q('#pasteMsg').textContent='Title & content required'; return }
-  const author = STATE.current||'anonymous'; const paste = { id: uid(), title:t, body:b, image: img||'', by: author, at: Date.now() };
-  // store per-user and global
-  DB.users[author] = DB.users[author] || { pass:'', avatar:'', friends:[], req:[], out:[], pastes:[], lastLogin:0, device:'' };
-  DB.users[author].pastes = DB.users[author].pastes||[]; DB.users[author].pastes.unshift(paste);
-  // also global pastes list for search & recent
-  DB._pastes = DB._pastes||[]; DB._pastes.unshift(paste);
-  saveAll(); q('#pasteMsg').style.color='var(--good)'; q('#pasteMsg').textContent='Saved'; setTimeout(()=>{ q('#pasteMsg').textContent=''; },1600); renderRecent(); renderTop(); });
+$('#changePassBtn').addEventListener('click', ()=>{ if(!STATE.current){ alert('Log in first'); return } const cur=prompt('Current password:'); if(cur===null) return; if(cur!==DB.users[STATE.current].pass){ alert('Current password incorrect'); return } const np=prompt('New password:'); if(!np) return; DB.users[STATE.current].pass=np; saveAll(); notify('Password changed'); });
 
-function renderRecent(){ const box=q('#recentList'); box.innerHTML=''; (DB._pastes||[]).slice(0,40).forEach(p=>{ const el=document.createElement('div'); el.className='item'; el.innerHTML = `<div style="flex:1"><b>${escape(p.title)}</b><div class='tiny muted'>by ${escape(p.by)} • ${new Date(p.at).toLocaleString()}</div><div style='margin-top:6px'>${escape(p.body)}</div></div>`; box.appendChild(el); }); }
-function renderTop(){ const box=q('#topList'); box.innerHTML=''; const freq={}; (DB._pastes||[]).forEach(p=>{ const key=p.title.toLowerCase(); freq[key]=freq[key]||{count:0, items:[]}; freq[key].count++; freq[key].items.push(p); }); Object.entries(freq).sort((a,b)=>b[1].count-a[1].count).slice(0,40).forEach(([t,v])=>{ // show title + one image if available in any paste
-  const pWithImg = v.items.find(x=>x.image);
-  const el=document.createElement('div'); el.className='item'; el.innerHTML = `<div style='display:flex;gap:8px;align-items:center;'><div style='width:80px;height:60px;flex-shrink:0'>${pWithImg?`<img src="${escape(pWithImg.image)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`:'<div style="width:100%;height:100%;background:linear-gradient(90deg,#333,#222);border-radius:8px"></div>'}</div><div style='flex:1'><b>${escape(v.items[0].title)}</b><div class="tiny muted">${v.count} mentions</div></div></div>`; box.appendChild(el); }); }
+/* ===== EXPORT / IMPORT ===== */
+$('#exportBtn').addEventListener('click', ()=>{ const data = {users:DB.users,chats:DB.chats,dms:DB.dms,pastes:DB._pastes}; const blob=new Blob([JSON.stringify(data, null, 2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='n0rb1n-backup.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); notify('Export started'); });
+$('#importBtn').addEventListener('click', ()=>{ const f=document.createElement('input'); f.type='file'; f.accept='application/json'; f.onchange=()=>{ const file=f.files[0]; const r=new FileReader(); r.onload=()=>{ try{ const data=JSON.parse(r.result); if(data.users) DB.users=data.users; if(data.chats) DB.chats=data.chats; if(data.dms) DB.dms=data.dms; if(data.pastes) DB._pastes=data.pastes; saveAll(); notify('Import completed'); renderRecent(); renderTop(); renderChat(); renderThreads(); updateTopUser(); }catch(e){ alert('Invalid file'); } }; r.readAsText(file); }; f.click(); });
 
-/* ======= Global Chat ======= */
-q('#sendChat').addEventListener('click', ()=>{
-  if(!STATE.current){ alert('Log in to chat'); return }
-  const v=(q('#chatInput').value||'').trim();
-  if(!v) return;
-  DB.chats.push({id:uid(), by:STATE.current, body:v, at:Date.now()});
-  saveAll();
-  q('#chatInput').value='';
-  renderChat();
-});
-q('#chatInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); q('#sendChat').click(); }});
-// Emoji bar (classic 2000s-style set)
-const EMOJIS = ['😀','😃','😄','😁','😆','🙂','😉','😍','😛','😜','😢','😭','😡','😮','😎','👍','👎','❤️','🔥','🎉'];
-(function(){ const bar=q('#emojiBar'); if(!bar) return; EMOJIS.forEach(e=>{ const b=document.createElement('button'); b.className='btn ghost'; b.style.padding='4px 8px'; b.textContent=e; b.addEventListener('click',()=>{ const i=q('#chatInput'); i.value=(i.value||'')+e; i.focus(); }); bar.appendChild(b); }); })();
+/* ===== PASTES with image (image only shows in Top Mentions) ===== */
+$('#savePaste').addEventListener('click', ()=>{
+  const t=($('#pasteTitle').value||'').trim(); const b=($('#pasteContent').value||'').trim(); const img=($('#pasteImage').value||'').trim(); if(!t||!b){ $('#pasteMsg').textContent='Title & content required'; return } const author=STATE.current||'anonymous'; const paste={id:uid(),title:t,body:b,image:img,by:author,at:Date.now()}; DB._pastes.unshift(paste); DB.users[author]=DB.users[author]||{pass:'',avatar:'',friends:[],req:[],out:[],pastes:[],lastLogin:0,device:''}; DB.users[author].pastes=DB.users[author].pastes||[]; DB.users[author].pastes.unshift(paste); saveAll(); $('#pasteMsg').textContent='Saved'; setTimeout(()=>$('#pasteMsg').textContent='',1500); renderRecent(); renderTop(); notify('Paste saved'); });
+function renderRecent(){ const box=$('#recentList'); box.innerHTML=''; (DB._pastes||[]).slice(0,40).forEach(p=>{ const el=document.createElement('div'); el.className='item'; el.innerHTML=`<div style="flex:1"><b>${esc(p.title)}</b><div class='tiny'>by ${esc(p.by)} • ${new Date(p.at).toLocaleString()}</div><div style='margin-top:6px'>${esc(p.body)}</div></div>`; box.appendChild(el); }); }
+function renderTop(){ const box=$('#topList'); box.innerHTML=''; const freq={}; (DB._pastes||[]).forEach(p=>{ const key=p.title.toLowerCase(); freq[key]=freq[key]||{count:0,items:[]}; freq[key].count++; freq[key].items.push(p); }); Object.entries(freq).sort((a,b)=>b[1].count-a[1].count).slice(0,80).forEach(([t,v])=>{ const pWithImg = v.items.find(x=>x.image); const el=document.createElement('div'); el.className='item'; el.innerHTML = `<div style='display:flex;gap:8px;align-items:center'><div style='width:90px;height:60px;flex-shrink:0'>${pWithImg?`<img src="${esc(pWithImg.image)}" style="width:100%;height:100%;object-fit:cover;border-radius:8px">`:'<div style="width:100%;height:100%;background:linear-gradient(90deg,#222,#111);border-radius:8px"></div>'}</div><div style='flex:1'><b>${esc(v.items[0].title)}</b><div class="tiny">${v.count} mentions</div></div></div>`; box.appendChild(el); }); }
 
-function renderChat(){
-  const box=q('#chatArea');
-  box.innerHTML='';
-  DB.chats.slice(-200).forEach(m=>{
-    const me = DB.users[m.by]||{};
-    const avatar = me.avatar
-      ? `<div class='avatar' style="width:34px;height:34px;font-size:14px;background-image:url(${escape(me.avatar)});background-size:cover"></div>`
-      : `<div class='avatar' style='width:34px;height:34px;font-size:14px'>${escape((m.by||' ')[0]||'?').toUpperCase()}</div>`;
-    const el=document.createElement('div');
-    el.style.margin='6px 0';
-    el.innerHTML = `<div style='display:flex;gap:8px;align-items:center'>
-        <button class='btn ghost' data-add='${escape(m.by)}' title='Add friend' style='padding:0;background:transparent;border:0'>${avatar}</button>
-        <div><b>${escape(m.by)}</b><div class='tiny muted'>${new Date(m.at).toLocaleTimeString()}</div></div>
-      </div>
-      <div style='margin-left:42px'>${escape(m.body)}</div>`;
-    box.appendChild(el);
-  });
-  box.scrollTop=box.scrollHeight;
-}
-// Add-friend via avatar click in chat
-q('#chatArea').addEventListener('click', e=>{
-  const b=e.target.closest('button[data-add]');
-  if(!b) return;
-  const target=b.dataset.add;
-  if(!STATE.current){ alert('Log in first'); return }
-  if(target===STATE.current){ alert("That's you 🙂"); return }
-  sendFriend(STATE.current, target);
-  alert('Friend request sent to '+target);
-});
+/* ===== GLOBAL CHAT (emoji bar + add friend via avatar) ===== */
+$('#sendChat').addEventListener('click', ()=>{ if(!STATE.current){ alert('Log in to chat'); return } const v=($('#chatInput').value||'').trim(); if(!v) return; DB.chats.push({id:uid(),by:STATE.current,body:v,at:Date.now()}); saveAll(); $('#chatInput').value=''; renderChat(); });
+$('#chatInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#sendChat').click(); }});
+const EMOJIS=['😀','😃','😄','😁','😆','🙂','😉','😍','😛','😜','😢','😭','😡','😮','😎','👍','👎','❤️','🔥','🎉']; (function(){ const bar=$('#emojiBar'); EMOJIS.forEach(e=>{ const b=document.createElement('button'); b.className='btn ghost'; b.style.padding='4px 8px'; b.textContent=e; b.addEventListener('click',()=>{ const i=$('#chatInput'); i.value=(i.value||'')+e; i.focus(); }); bar.appendChild(b); }); })();
+function renderChat(){ const box=$('#chatArea'); box.innerHTML=''; DB.chats.slice(-500).forEach(m=>{ const me=DB.users[m.by]||{}; const avatar = me.avatar?`<div class='avatar' style="width:34px;height:34px;font-size:14px;background-image:url(${esc(me.avatar)});background-size:cover"></div>`:`<div class='avatar' style='width:34px;height:34px;font-size:14px'>${esc((m.by||' ')[0]||'?').toUpperCase()}</div>`; const el=document.createElement('div'); el.style.margin='6px 0'; el.innerHTML=`<div style='display:flex;gap:8px;align-items:center'><button class='btn ghost' data-add='${esc(m.by)}' title='Add friend' style='padding:0;background:transparent;border:0'>${avatar}</button><div><b>${esc(m.by)}</b><div class='tiny'>${new Date(m.at).toLocaleTimeString()}</div></div></div><div style='margin-left:42px'>${esc(m.body)}</div>`; box.appendChild(el); }); box.scrollTop=box.scrollHeight; }
+$('#chatArea').addEventListener('click', e=>{ const b=e.target.closest('button[data-add]'); if(!b) return; const target=b.dataset.add; if(!STATE.current){ alert('Log in first'); return } if(target===STATE.current){ alert("That's you 🙂"); return } sendFriend(STATE.current,target); notify('Friend request sent to '+target); });
 
-/* ======= Friends (requests accept/deny) ======= */
-function renderFriends(){ const inc=q('#incomingReq'); const fl=q('#friendsList'); inc.innerHTML=''; fl.innerHTML=''; if(!STATE.current){ inc.innerHTML='<div class="tiny muted">Log in to manage friends</div>'; return }
-  const me = DB.users[STATE.current]; (me.req||[]).forEach(u=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`<div style='flex:1'><b>${escape(u)}</b><div class='tiny muted'>requested</div></div><div><button class='btn' data-acc='${u}'>Accept</button><button class='btn ghost' data-deny='${u}'>Deny</button></div>`; inc.appendChild(d); });
-  (me.friends||[]).forEach(u=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`<div style='flex:1'><b>${escape(u)}</b></div><div><button class='btn' data-dm='${u}'>Message</button></div>`; fl.appendChild(d); }); }
-q('#incomingReq').addEventListener('click', e=>{ const a=e.target.closest('button[data-acc]'); const d=e.target.closest('button[data-deny]'); if(a){ acceptReq(a.dataset.acc) } if(d){ denyReq(d.dataset.deny) } });
-q('#friendsList').addEventListener('click', e=>{ const b=e.target.closest('button[data-dm]'); if(b){ startDM(b.dataset.dm); navigate('messages',true); } });
-function sendFriend(from,to){ if(!DB.users[to] || !from) return; if(DB.users[to].req.includes(from) || DB.users[to].friends.includes(from)) return; DB.users[to].req.push(from); DB.users[from].out.push(to); saveAll(); renderFriends(); }
-function acceptReq(u){ if(!STATE.current) return; const me=DB.users[STATE.current]; me.req = (me.req||[]).filter(x=>x!==u); me.friends = me.friends||[]; if(!me.friends.includes(u)) me.friends.push(u); const other = DB.users[u]; other.out = (other.out||[]).filter(x=>x!==STATE.current); other.friends = other.friends||[]; if(!other.friends.includes(STATE.current)) other.friends.push(STATE.current); saveAll(); renderFriends(); }
-function denyReq(u){ if(!STATE.current) return; const me=DB.users[STATE.current]; me.req = (me.req||[]).filter(x=>x!==u); const other = DB.users[u]; other.out = (other.out||[]).filter(x=>x!==STATE.current); saveAll(); renderFriends(); }
+/* ===== FRIENDS ===== */
+function sendFriend(from,to){ if(!DB.users[to] || !from) return; if(DB.users[to].req.includes(from) || DB.users[to].friends.includes(from)) return; DB.users[to].req.push(from); DB.users[from].out=DB.users[from].out||[]; if(!DB.users[from].out.includes(to)) DB.users[from].out.push(to); saveAll(); renderFriends(); }
+function renderFriends(){ const inc=$('#incomingReq'), fl=$('#friendsList'); inc.innerHTML=''; fl.innerHTML=''; if(!STATE.current){ inc.innerHTML='<div class="tiny">Log in to manage friends</div>'; return } const me=DB.users[STATE.current]; (me.req||[]).forEach(u=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`<div style='flex:1'><b>${esc(u)}</b><div class='tiny'>requested</div></div><div><button class='btn' data-acc='${esc(u)}'>Accept</button><button class='btn ghost' data-deny='${esc(u)}'>Deny</button></div>`; inc.appendChild(d); }); (me.friends||[]).forEach(u=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`<div style='flex:1'><b>${esc(u)}</b></div><div><button class='btn' data-dm='${esc(u)}'>Message</button></div>`; fl.appendChild(d); }); }
+$('#incomingReq').addEventListener('click', e=>{ const a=e.target.closest('button[data-acc]'); const d=e.target.closest('button[data-deny]'); if(a) acceptReq(a.dataset.acc); if(d) denyReq(d.dataset.deny); });
+$('#friendsList').addEventListener('click', e=>{ const b=e.target.closest('button[data-dm]'); if(b) { startDM(b.dataset.dm); navigate('messages',true); } });
+function acceptReq(u){ if(!STATE.current) return; const me=DB.users[STATE.current]; me.req = (me.req||[]).filter(x=>x!==u); me.friends = me.friends||[]; if(!me.friends.includes(u)) me.friends.push(u); const other=DB.users[u]; other.out=(other.out||[]).filter(x=>x!==STATE.current); other.friends=other.friends||[]; if(!other.friends.includes(STATE.current)) other.friends.push(STATE.current); saveAll(); renderFriends(); notify('You are now friends with '+u); }
+function denyReq(u){ if(!STATE.current) return; const me=DB.users[STATE.current]; me.req=(me.req||[]).filter(x=>x!==u); const other=DB.users[u]; other.out=(other.out||[]).filter(x=>x!==STATE.current); saveAll(); renderFriends(); notify('Denied request from '+u); }
 
-/* ======= DMs ======= */
-function convo(a,b){ return [a,b].sort().join('|'); }
-function ensureThread(a,b){ const id = convo(a,b); DB.dms[id] = DB.dms[id]||{between:[a,b], msgs:[]}; saveAll(); return id }
-function renderThreads(){ const list=q('#threadList'); list.innerHTML=''; if(!STATE.current){ list.textContent='Log in to see threads'; return } Object.entries(DB.dms).filter(([id,th])=> th.between.includes(STATE.current)).sort((a,b)=> (b[1].msgs.at(-1)?.at||0)-(a[1].msgs.at(-1)?.at||0)).forEach(([id,th])=>{ const other = th.between.find(x=>x!==STATE.current); const el=document.createElement('div'); el.className='item'; el.dataset.id=id; el.innerHTML=`<div style='flex:1'><b>${escape(other)}</b><div class='tiny muted'>${th.msgs.at(-1)?.body||'—'}</div></div><div><button class='btn' data-open='${id}'>Open</button></div>`; list.appendChild(el); }); }
-q('#threadList').addEventListener('click', e=>{ const b = e.target.closest('button[data-open]'); if(b){ STATE.activeDM = b.dataset.open; renderDM(STATE.activeDM); } });
-function renderDM(id){ const area=q('#dmArea'); area.innerHTML=''; if(!id) return; const th=DB.dms[id]; const other = th.between.find(x=>x!==STATE.current); q('#dmHeader').textContent = `Chat with ${other}`; th.msgs.forEach(m=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML = `<div style='flex:1'><b>${escape(m.by)}</b><div class='tiny muted'>${new Date(m.at).toLocaleTimeString()}</div>${escape(m.body)}</div>`; area.appendChild(d); }); area.scrollTop=area.scrollHeight; }
-q('#dmSend').addEventListener('click', ()=>{ if(!STATE.current||!STATE.activeDM){ alert('Pick a thread'); return } const v=(q('#dmInput').value||'').trim(); if(!v) return; DB.dms[STATE.activeDM].msgs.push({id:uid(),by:STATE.current,body:v,at:Date.now()}); saveAll(); q('#dmInput').value=''; renderDM(STATE.activeDM); renderThreads(); });
-q('#dmInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); q('#dmSend').click(); }}); return } const v=(q('#dmInput').value||'').trim(); if(!v) return; DB.dms[STATE.activeDM].msgs.push({id:uid(),by:STATE.current,body:v,at:Date.now()}); saveAll(); q('#dmInput').value=''; renderDM(STATE.activeDM); renderThreads(); });
-function startDM(user){ if(!STATE.current) return; const id = ensureThread(STATE.current, user); STATE.activeDM = id; renderThreads(); renderDM(id); }
+/* ===== DMs ===== */
+function convo(a,b){ return [a,b].sort().join('|') }
+function ensureThread(a,b){ const id=convo(a,b); DB.dms[id]=DB.dms[id]||{between:[a,b],msgs:[]}; saveAll(); return id }
+function renderThreads(){ const list=$('#threadList'); list.innerHTML=''; if(!STATE.current){ list.textContent='Log in to see threads'; return } Object.entries(DB.dms).filter(([id,th])=>th.between.includes(STATE.current)).sort((a,b)=> (b[1].msgs.at(-1)?.at||0)-(a[1].msgs.at(-1)?.at||0)).forEach(([id,th])=>{ const other=th.between.find(x=>x!==STATE.current); const el=document.createElement('div'); el.className='item'; el.dataset.id=id; el.innerHTML=`<div style='flex:1'><b>${esc(other)}</b><div class='tiny'>${th.msgs.at(-1)?.body||'—'}</div></div><div><button class='btn' data-open='${esc(id)}'>Open</button></div>`; list.appendChild(el); }); }
+$('#threadList').addEventListener('click', e=>{ const b=e.target.closest('button[data-open]'); if(b){ STATE.activeDM=b.dataset.open; renderDM(STATE.activeDM); } });
+function renderDM(id){ const area=$('#dmArea'); area.innerHTML=''; if(!id) return; const th=DB.dms[id]; const other=th.between.find(x=>x!==STATE.current); $('#dmHeader').textContent = `Chat with ${other}`; th.msgs.forEach(m=>{ const d=document.createElement('div'); d.className='item'; d.innerHTML=`<div style='flex:1'><b>${esc(m.by)}</b><div class='tiny'>${new Date(m.at).toLocaleTimeString()}</div>${esc(m.body)}</div>`; area.appendChild(d); }); area.scrollTop=area.scrollHeight; }
+$('#dmSend').addEventListener('click', ()=>{ if(!STATE.current||!STATE.activeDM){ alert('Pick a thread'); return } const v=($('#dmInput').value||'').trim(); if(!v) return; DB.dms[STATE.activeDM].msgs.push({id:uid(),by:STATE.current,body:v,at:Date.now()}); saveAll(); $('#dmInput').value=''; renderDM(STATE.activeDM); renderThreads(); notify('Message sent'); });
+$('#dmInput').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#dmSend').click(); }});
+function startDM(user){ if(!STATE.current) return; if(!DB.users[user]){ alert('User not found'); return } const id=ensureThread(STATE.current,user); STATE.activeDM=id; renderThreads(); renderDM(id); }
 
-/* ======= Account page render ======= */
-function renderAccount(){ if(!STATE.current){ navigate('login'); return } updateTopUser(); const me=DB.users[STATE.current]; q('#myPastes').innerHTML = (me.pastes||[]).slice(0,10).map(p=>`<div class='item'><div style='flex:1'><b>${escape(p.title)}</b><div class='tiny muted'>${new Date(p.at).toLocaleString()}</div></div>${p.image?`<div style='width:80px;height:60px;flex-shrink:0'><img src='${escape(p.image)}' style='width:100%;height:100%;object-fit:cover;border-radius:8px' /></div>`:''}</div>`).join(''); }
+/* ===== ACCOUNT PAGE ===== */
+function renderAccount(){ if(!STATE.current){ navigate('login',true); return } updateTopUser(); const me=DB.users[STATE.current]; $('#myPastes').innerHTML=(me.pastes||[]).slice(0,10).map(p=>`<div class='item'><div style='flex:1'><b>${esc(p.title)}</b><div class='tiny'>${new Date(p.at).toLocaleString()}</div></div>${p.image?`<div style='width:80px;height:60px;flex-shrink:0'><img src='${esc(p.image)}' style='width:100%;height:100%;object-fit:cover;border-radius:8px'></div>`:''}</div>`).join(''); }
 
-/* ======= Render helpers & boot ======= */
-function renderHome(){ const qv=(q('#q').value||'').toLowerCase(); const res=(DB._pastes||[]).filter(p=>p.title.toLowerCase().includes(qv)); q('#homeResults').innerHTML = res.slice(0,30).map(p=>`<div class='item'><div style='flex:1'><b>${escape(p.title)}</b><div class='tiny muted'>by ${escape(p.by)} • ${new Date(p.at).toLocaleString()}</div><div style='margin-top:6px'>${escape(p.body)}</div></div></div>`).join(''); }
-q('#q').addEventListener('input', renderHome);
-/* page hook calls renderTop() directly */ // no-op, page hook handles it by calling renderTop directly
+/* ===== HOME SEARCH ===== */
+function renderHome(){ const qv=($('#q').value||'').toLowerCase(); const res=(DB._pastes||[]).filter(p=>p.title.toLowerCase().includes(qv)); $('#homeResults').innerHTML = res.slice(0,30).map(p=>`<div class='item'><div style='flex:1'><b>${esc(p.title)}</b><div class='tiny'>by ${esc(p.by)} • ${new Date(p.at).toLocaleString()}</div><div style='margin-top:6px'>${esc(p.body)}</div></div></div>`).join(''); }
+$('#q').addEventListener('input', renderHome);
 
-/* ======= Presence & online count (simple) ======= */
-function heartbeat(){ if(STATE.current) DB.users[STATE.current].lastSeen = Date.now(); LS.set('n_users', DB.users); const now = Date.now(); let count = 0; Object.values(DB.users||{}).forEach(u=>{ if(u.lastSeen && now - u.lastSeen < 15000) count++; }); q('#onlineTxt').textContent = `● ${count} online`; }
+/* ===== PRESENCE ===== */
+function heartbeat(){ if(STATE.current) DB.users[STATE.current].lastSeen=Date.now(); saveAll(); const now=Date.now(); let cnt=0; Object.values(DB.users||{}).forEach(u=>{ if(u.lastSeen && now - u.lastSeen < 20000) cnt++; }); $('#onlineTxt').textContent=`● ${cnt} online`; }
 setInterval(heartbeat,4000);
 
-/* ======= Initial render actions ======= */
+/* ===== INITIALIZE & UI BINDINGS ===== */
+$('#toggleSidebar').addEventListener('click', ()=>$('#sidebar').classList.toggle('sidebar-hidden'));
+$('#closeMenu').addEventListener('click', ()=>$('#sidebar').classList.add('sidebar-hidden'));
+$('#exportBtn').addEventListener('click', ()=>{/* handled above */});
+
+// Ensure structures
+DB._pastes=DB._pastes||[]; DB.chats=DB.chats||[]; DB.dms=DB.dms||{}; DB.users=DB.users||{};
+
+// Boot render
 renderRecent(); renderTop(); renderChat(); renderThreads(); updateTopUser();
 
-/* ensure DB structures exist */
-DB._pastes = DB._pastes || [];
-
-/* Expose some global actions for demo ease */
-// Globals removed in full version
+// Expose some helpers for convenience (in-page only)
+window.n0rb = { DB, STATE, saveAll, navigate };
 </script>
 </body>
 </html>
